@@ -126,6 +126,55 @@ During implementation, I worked through issues involving:
 
 The detailed project report and supporting screenshots are available in this repository.
 
+## Screenshots
+
+### Splunk Dashboards
+
+**Successful Logins Dashboard**
+
+![Successful Logins](Screenshots/Successful-Logins-Dashboard.png)
+
+**Firewall Activity Dashboard**
+
+![Firewall Activity](Screenshots/Firewall-Activity-Dashboard.png)
+
+### OPNsense Firewall Monitoring
+
+**Syslog Events**
+
+![OPNsense Syslog](Screenshots/OPNsense-Syslog-Events.png)
+
+**Blocked Traffic**
+
+![Blocked Traffic](Screenshots/OPNsense-Blocked-Traffic.png)
+
+**Passed Traffic**
+
+![Passed Traffic](Screenshots/OPNsense-Passed-Traffic.png)
+
+### Security Detection Use Cases
+
+**Failed Logon Events – Event ID 4625**
+
+![Failed Logons](Screenshots/Failed-Logon-Events-4625.png)
+
+**Brute-Force Detection SPL Query**
+
+![Brute Force SPL](Screenshots/Brute-Force-Detection-SPL.png)
+
+**Brute-Force Alert Configuration**
+
+![Brute Force Alert](Screenshots/Brute-Force-Alert-Configuration.png)
+
+**Saved Brute-Force Alert**
+
+![Enabled Alert](Screenshots/Brute-Force-Alert-Enabled.png)
+
+### Firewall Analysis
+
+**Firewall Pass/Block SPL Query**
+
+![Firewall SPL](Screenshots/Firewall-Pass-Block-SPL.png)
 ---
 
 **Disclaimer:** This project was developed in an isolated VirtualBox lab environment using test accounts and controlled security activities. No production systems or real user accounts were involved.
