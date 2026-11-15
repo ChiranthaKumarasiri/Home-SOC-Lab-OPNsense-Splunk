@@ -177,4 +177,97 @@ The detailed project report and supporting screenshots are available in this rep
 ![Firewall SPL](Screenshots/Firewall-Pass-Block-SPL.png)
 ---
 
+## Splunk SPL Queries
+
+The following SPL queries were used in this lab for Windows Security event monitoring, OPNsense firewall log analysis, dashboard visualizations, and security detection use cases.
+
+### 1. Windows Security Event Monitoring
+
+**Successful Logons – Event ID 4624**
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4624
+| timechart count by host
+```
+
+**Failed Logons – Event ID 4625**
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4625
+| timechart count by host
+```
+
+**Top Accounts by Failed Logons**
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4625
+| stats count by Account_Name
+| sort -count
+```
+
+**Failed Logon Event Details**
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4625
+| table _time host Account_Name Failure_Reason
+| sort -_time
+```
+
+### 2. OPNsense Firewall Monitoring
+
+**Syslog Event Collection**
+
+```spl
+index=main sourcetype=syslog
+```
+
+**Firewall Pass and Block Activity**
+
+```spl
+index=main sourcetype=syslog "filterlog"
+| eval fw_action=if(match(_raw,"block"),"block","pass")
+| timechart count by fw_action
+```
+
+**Blocked Firewall Traffic**
+
+```spl
+index=main sourcetype=syslog "filterlog" "block"
+```
+
+**Passed Firewall Traffic**
+
+```spl
+index=main sourcetype=syslog "filterlog" "pass"
+```
+
+### 3. Security Detection Use Cases
+
+**Brute-Force Detection – Event ID 4625**
+
+Identifies five or more failed logon attempts associated with the same account within a five-minute time window.
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4625
+| bucket _time span=5m
+| stats count by _time, host, Account_Name
+| where count >= 5
+```
+
+**New User Account Creation – Event ID 4720**
+
+Identifies local user account creation and extracts the account that performed the action and the newly created account.
+
+```spl
+index=main sourcetype="WinEventLog:Security" EventCode=4720
+| eval created_by=mvindex(Account_Name,0),
+       new_account=mvindex(Account_Name,1)
+| table _time host created_by new_account
+```
+
+### Detection Validation Notes
+
+- **New User Account Creation:** Validated using Event ID 4720. The search returned the account creation event, and the alert appeared in Triggered Alerts approximately two minutes after testing.
+- **Brute-Force Detection:** The controlled test generated seven Event ID 4625 records. The intended SPL query identified the five-or-more failures threshold within a five-minute window. The saved scheduled alert still requires correction and end-to-end retesting.
+
 **Disclaimer:** This project was developed in an isolated VirtualBox lab environment using test accounts and controlled security activities. No production systems or real user accounts were involved.
